@@ -28,6 +28,41 @@ namespace IdentityServer3.Host.Config
             return new List<Client>
             {
                 /////////////////////////////////////////////////////////////
+                // Console Windows Grant Type
+                /////////////////////////////////////////////////////////////
+                new Client
+                {
+                    ClientName = "Windows Grant Client",
+                    ClientId = "windowsgrant.client",
+                    Flow = Flows.Custom,
+
+                    ClientSecrets = new List<Secret>
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    AllowedScopes = new List<string>
+                    {
+                        "openid",
+                        "profile",
+                        "roles",
+                        "api",
+                        "read",
+                        "write"
+                    },
+
+                    AllowedCustomGrantTypes = new List<string>
+                    {
+                        "windows"
+                    },
+
+                    RequireConsent = false,
+
+                    AccessTokenType = AccessTokenType.Jwt
+                },
+
+
+                /////////////////////////////////////////////////////////////
                 // Client Credentials With Reference Token
                 /////////////////////////////////////////////////////////////
                 new Client

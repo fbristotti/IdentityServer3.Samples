@@ -7,6 +7,9 @@ using IdentityServer3.Core.Services;
 using Microsoft.Owin.Security.WsFederation;
 using Serilog;
 using IdentityServer3.Host.Config;
+using System.Threading.Tasks;
+using IdentityServer.WindowsAuthentication.Services;
+using System.Security.Claims;
 
 [assembly: OwinStartup(typeof(WebHost.Startup))]
 
@@ -14,55 +17,68 @@ namespace WebHost
 {
     public class Startup
     {
-        public void Configuration(IAppBuilder appBuilder)
+        public void Configuration(IAppBuilder app)
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Trace(outputTemplate: "{Timestamp} [{Level}] ({Name}){NewLine} {Message}{NewLine}{Exception}")
                 .CreateLogger();
 
-            appBuilder.Map("/windows", ConfigureWindowsTokenProvider);
-
-            var factory = new IdentityServerServiceFactory()
-                .UseInMemoryClients(Clients.Get())
-                .UseInMemoryScopes(Scopes.Get());
-            factory.UserService = new Registration<IUserService>(typeof(ExternalRegistrationUserService));
-
-            var options = new IdentityServerOptions
+            app.Map("/windows", win =>
             {
-                SigningCertificate = Certificate.Load(),
-                Factory = factory,
-                AuthenticationOptions = new AuthenticationOptions
+                win.UseWindowsAuthenticationService(new WindowsAuthenticationOptions
+                 {
+                     IdpRealm = "urn:idsrv3",
+                     IdpReplyUrl = "https://localhost:44333/was",
+                     SigningCertificate = Certificate.Load(),
+                     EnableOAuth2Endpoint = true,
+                     CustomClaimsProvider = new AdditionalWindowsClaimsProvider()
+                 });
+            });
+
+            app.Map("/identity", identityServer =>
+            {
+                var identityServerFactory = new IdentityServerServiceFactory().Configure();
+                identityServer.UseIdentityServer(new IdentityServerOptions
                 {
-                    EnableLocalLogin = false,
-                    IdentityProviders = ConfigureIdentityProviders
-                }
-            };
-
-            appBuilder.UseIdentityServer(options);
+                    SiteName = "IdentityServer",
+                    SigningCertificate = Certificate.Load(),
+                    Factory = identityServerFactory,
+                    AuthenticationOptions = new AuthenticationOptions
+                    {
+                        EnableLocalLogin = false
+                    }
+                });
+            });
+           
         }
+    }
 
-        private static void ConfigureWindowsTokenProvider(IAppBuilder app)
+    public class AdditionalWindowsClaimsProvider : ICustomClaimsProvider
+    {
+        public async Task TransformAsync(CustomClaimsProviderContext context)
         {
-            app.UseWindowsAuthenticationService(new WindowsAuthenticationOptions
+            context.OutgoingSubject.AddClaims(new Claim[]
             {
-                IdpReplyUrl = "https://localhost:44333/was",
-                SigningCertificate = Certificate.Load(),
-                EnableOAuth2Endpoint = false
+                new Claim(ClaimTypes.Role, "OPENCLI"),
+                new Claim(ClaimTypes.Role, "TRACO"),
+                new Claim(ClaimTypes.Role, "SUBRBLE"),
+                new Claim(ClaimTypes.Role, "TASFD"),
+                new Claim(ClaimTypes.Role, "LQWER"),
+                new Claim(ClaimTypes.Role, "JVMQI"),
             });
         }
 
-        private void ConfigureIdentityProviders(IAppBuilder app, string signInAsType)
+        /// <summary>
+        /// In a real implemention you look for an email in a mapping table or most likely in active directory.
+        /// 
+        /// This hard-coded email however will trigger the idenity server to ask for additional information since
+        /// the user is not known yet in the user store and he used windows authentication to authenticate.
+        /// </summary>
+        /// <param name="outgoingSubject"></param>
+        /// <returns></returns>
+        private Task<string> GetEmailFromActiveDirectoryAsync(ClaimsIdentity outgoingSubject)
         {
-            var wsFederation = new WsFederationAuthenticationOptions
-            {
-                AuthenticationType = "windows",
-                Caption = "Windows",
-                SignInAsAuthenticationType = signInAsType,
-
-                MetadataAddress = "https://localhost:44333/windows",
-                Wtrealm = "urn:idsrv3"
-            };
-            app.UseWsFederationAuthentication(wsFederation);
+            return Task.FromResult("foo@bar.com");
         }
     }
 }

@@ -8,7 +8,7 @@ using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services.Default;
 
-namespace WebHost
+namespace WebHost.Services
 {
     public class ExternalRegistrationUserService : UserServiceBase
     {
@@ -19,7 +19,7 @@ namespace WebHost
             public string ProviderID { get; set; }
             public List<Claim> Claims { get; set; }
         }
-        
+
         public static List<CustomUser> Users = new List<CustomUser>();
 
         public override Task AuthenticateExternalAsync(ExternalAuthenticationContext context)
@@ -33,7 +33,8 @@ namespace WebHost
                 var nameClaim = context.ExternalIdentity.Claims.First(x => x.Type == Constants.ClaimTypes.Name);
                 if (nameClaim != null) name = nameClaim.Value;
 
-                user = new CustomUser { 
+                user = new CustomUser
+                {
                     Subject = Guid.NewGuid().ToString(),
                     Provider = context.ExternalIdentity.Provider,
                     ProviderID = context.ExternalIdentity.ProviderId,
@@ -43,7 +44,7 @@ namespace WebHost
             }
 
             name = user.Claims.First(x => x.Type == Constants.ClaimTypes.Name).Value;
-            context.AuthenticateResult = new AuthenticateResult(user.Subject, name, identityProvider:user.Provider);
+            context.AuthenticateResult = new AuthenticateResult(user.Subject, name, identityProvider: user.Provider);
             return Task.FromResult(0);
         }
 

@@ -86,7 +86,7 @@
         var client_id = 'js.manual';
 
         function getToken() {
-            var authorizationUrl = 'https://localhost:44333/core/connect/authorize';
+            var authorizationUrl = 'https://localhost:44333/connect/authorize';
             var redirect_uri = window.location.protocol + "//" + window.location.host + "/index.html";
             var response_type = "id_token token";
             var scope = "openid email read write";
@@ -135,7 +135,7 @@
                 return;
             }
 
-            var metadata_url = 'https://localhost:44333/core/.well-known/openid-configuration';
+            var metadata_url = 'https://localhost:44333/.well-known/openid-configuration';
 
             getJson(metadata_url).then(function (metadata) {
                 //show(metadata);
@@ -219,8 +219,8 @@
         }
 
         function logout() {
-            //window.location = "https://localhost:44333/core/connect/endsession";
-            window.location = "https://localhost:44333/core/connect/endsession?post_logout_redirect_uri=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/index.html") + "&id_token_hint=" + encodeURIComponent(id_token);
+            //window.location = "https://localhost:44333/connect/endsession";
+            window.location = "https://localhost:44333/connect/endsession?post_logout_redirect_uri=" + encodeURIComponent(window.location.protocol + "//" + window.location.host + "/index.html") + "&id_token_hint=" + encodeURIComponent(id_token);
         }
 
         function getJson(url, token) {
