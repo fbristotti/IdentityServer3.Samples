@@ -83,7 +83,7 @@ namespace WebHost.Services
             var claims = new List<Claim>();
             if (nameClaim != null)
             {
-                claims.Add(nameClaim);
+                claims.AddRange(claimsFromExternalProvider);
             }
 
             var context = new ExternalAuthenticationContext()

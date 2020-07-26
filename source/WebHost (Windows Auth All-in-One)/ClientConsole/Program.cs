@@ -35,7 +35,7 @@ namespace ClientConsole
                 { "win_token", resultToken.AccessToken }
             };
 
-            var authResult = clientForAuth.RequestCustomGrantAsync("windows", "api write", additionalvalues).Result;
+            var authResult = clientForAuth.RequestCustomGrantAsync("windows", "api write roles", additionalvalues).Result;
 
             ShowResponse(authResult);
 

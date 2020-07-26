@@ -41,6 +41,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IdentityModel">
+      <HintPath>..\ClientConsole\bin\Debug\IdentityModel.dll</HintPath>
+    </Reference>
     <Reference Include="IdentityServer.WindowsAuthentication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IdentityServer.WindowsAuthentication.1.1.0\lib\net45\IdentityServer.WindowsAuthentication.dll</HintPath>
       <Private>True</Private>
@@ -136,6 +139,7 @@
       <Link>Configuration\Scopes.cs</Link>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="Services\CustomClaimsProvider.cs" />
     <Compile Include="ExternalRegistrationUserService.cs" />
     <Compile Include="IdentityServerServiceFactoryExtensions.cs" />
     <Compile Include="Configuration\Cert.cs" />

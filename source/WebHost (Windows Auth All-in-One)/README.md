@@ -8,3 +8,6 @@ Please note that since both components are hosted within the same web app, no ot
 
 
 Thanks to Eran Stiller (@estiller) for contributing this sample. Please contact him directly when you have questions or improvements.
+
+
+[Blog post](https://bot-insane.com/IdentityServer3-with-custom-grant-flow-and-windows-authentication/) where I found information to build this solution

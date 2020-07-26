@@ -13,10 +13,12 @@ namespace SampleAspNetWebApi
         {
             JwtSecurityTokenHandler.InboundClaimTypeMap.Clear();
 
+
+
             app.UseIdentityServerBearerTokenAuthentication(new IdentityServerBearerTokenAuthenticationOptions
                 {
                     Authority = "https://localhost:44333/identity",
-                    RequiredScopes = new[] { "write" },
+                    //RequiredScopes = new[] { "write" },
                 });
 
             app.UseWebApi(WebApiConfig.Register());

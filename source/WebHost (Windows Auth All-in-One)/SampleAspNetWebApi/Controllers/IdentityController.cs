@@ -4,7 +4,7 @@ using System.Web.Http;
 
 namespace SampleAspNetWebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "ASDF")]
     public class IdentityController : ApiController
     {
         public dynamic Get()

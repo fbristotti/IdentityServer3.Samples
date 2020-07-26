@@ -43,6 +43,7 @@ namespace WebHost
                     SiteName = "IdentityServer",
                     SigningCertificate = Certificate.Load(),
                     Factory = identityServerFactory,
+                    
                     AuthenticationOptions = new AuthenticationOptions
                     {
                         EnableLocalLogin = false
@@ -57,15 +58,8 @@ namespace WebHost
     {
         public async Task TransformAsync(CustomClaimsProviderContext context)
         {
-            context.OutgoingSubject.AddClaims(new Claim[]
-            {
-                new Claim(ClaimTypes.Role, "OPENCLI"),
-                new Claim(ClaimTypes.Role, "TRACO"),
-                new Claim(ClaimTypes.Role, "SUBRBLE"),
-                new Claim(ClaimTypes.Role, "TASFD"),
-                new Claim(ClaimTypes.Role, "LQWER"),
-                new Claim(ClaimTypes.Role, "JVMQI"),
-            });
+            var email = await GetEmailFromActiveDirectoryAsync(context.OutgoingSubject);
+            context.OutgoingSubject.AddClaim(new Claim(ClaimTypes.Email, email));
         }
 
         /// <summary>
